@@ -21,19 +21,18 @@ jobs:
       uses: android-actions/setup-android@v3
 
     - name: Install Android SDK components
+      run: sdkmanager --install "platforms;android-34" "build-tools;34.0.0"
+
+    - name: List repository contents
+      run: ls -la
+
+    - name: Check if android-app exists
       run: |
-        sdkmanager --install "platforms;android-34" "build-tools;34.0.0"
-
-    - name: Make Gradle executable
-      working-directory: android-app
-      run: chmod +x gradlew
-
-    - name: Build Release APK
-      working-directory: android-app
-      run: ./gradlew assembleRelease --no-daemon --stacktrace
-
-    - name: Upload Release APK
-      uses: actions/upload-artifact@v4
-      with:
-        name: CallAssistBharatAI-release
-        path: android-app/app/build/outputs/apk/release/app-release-unsigned.apk
+        if [ -d "android-app" ]; then
+          echo "android-app folder found"
+          ls -la android-app/
+        else
+          echo "android-app folder NOT found"
+          echo "Available folders:"
+          find . -type d -maxdepth 2
+        fi
